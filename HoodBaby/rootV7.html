@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <title>Hood Baby</title>
+
+        <!-- Bootstrap CSS CDN -->
+		<!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <!-- My Custom CSS -->
+        <link rel="stylesheet" href="style1.css"-->
+    </head>
+    <body>	
+		
+		<canvas id="wes_canv"></canvas>
+		<canvas id="gar_canv"></canvas>
+		<canvas id="ron_canv"></canvas>
+		<canvas id="drum_canv"></canvas>
+		<div class="slidecontainer">
+			<input type="range" min="0" max="100" value="50" class="slider" id="ElbowRate">
+		</div>
+		<div class="slidecontainer">
+			<input type="range" min="0" max="100" value="50" class="slider" id="bodRate">
+		</div>
+		<div class="slidecontainer">
+			<input type="range" min="10" max="50" value="20" class="slider" id="kneeSpread">
+		</div>
+		<img id="wes" src="wes.png">
+		<img id="guitar" src="guitar.png">
+		<img id="bass" src="bass.png">
+		<img id="keys" src="keys.png">
+		<img id="drums" src="drum.png">
+        <script type="text/javascript">
+			var w=.23*window.innerWidth;
+
+			document.getElementById('wes_canv').width = w;
+			document.getElementById('wes_canv').height = w;
+			document.getElementById('gar_canv').width = w;
+			document.getElementById('gar_canv').height = w;
+			document.getElementById('ron_canv').width = w;
+			document.getElementById('ron_canv').height = w;
+			document.getElementById('drum_canv').width = w;
+			document.getElementById('drum_canv').height = w;
+			
+			<!-- Wes -->
+			
+			var canvas = document.getElementById('wes_canv');
+			var ctx = canvas.getContext('2d');
+			
+			var bod = [.5*w,.5*w];
+			var LA = Math.round(.08*w); <!-- length arm
+			var FAL = Math.round(.05*w); <!-- forearm length
+			var LAA = Math.PI; <!-- Left arm angle
+			var RAA = LAA - Math.PI;
+			var LEB = [bod[0]+LA*Math.cos(LAA), bod[1]+LA*Math.sin(LAA)]; <!-- Left elbow position
+			var REB = [bod[0]+LA*Math.cos(RAA), bod[1]+LA*Math.sin(RAA)]; 
+			var FAA = Math.round(.8*Math.PI);
+			var LH = [LEB[0]+FAL*Math.cos(FAA), LEB[1]+FAL*Math.sin(FAA)];
+			var RH = [REB[0]-FAL*Math.cos(FAA), REB[1]-FAL*Math.sin(FAA)];
+			var ElbowRate = document.getElementById("ElbowRate").value;
+			var tick = 0;
+			var level = 1;
+			var butt = [Math.round(.5*w),Math.round(.7*w)];
+			var NL = Math.round(.09*w); <!-- knee length
+			var KS = parseInt(document.getElementById('kneeSpread').value);
+			var LN = [butt[0]+1.2*KS, butt[1]+NL];
+			var RN = [butt[0]-KS, butt[1]+NL];
+			var RF = [Math.round(.4*w),Math.round(.9*w)]; <!-- left footer
+			var LF = [Math.round(.6*w),Math.round(.9*w)]; <!-- Right foot
+			
+			var fontstring = getFS(w);
+			
+			<!-- Garret
+			var canvasG = document.getElementById('gar_canv');
+			var ctxG = canvasG.getContext('2d');
+			ctxG.font = fontstring;
+			
+			<!-- Ronnie
+			var canvasR = document.getElementById('ron_canv');
+			var ctxR = canvasR.getContext('2d');
+			ctxR.font = fontstring;
+			
+			<!-- Drummer
+			var canvasD = document.getElementById('drum_canv');
+			var ctxD = canvasD.getContext('2d');
+			ctxD.font = fontstring;
+			
+			function init() {
+				window.requestAnimationFrame(update);			
+			}
+			function resize_canvas(){
+			<!-- gets called if window resizes -->
+			 w=.23*window.innerWidth;
+			 
+			document.getElementById('wes_canv').width = w;
+			document.getElementById('wes_canv').height = w;
+			document.getElementById('gar_canv').width = w;
+			document.getElementById('gar_canv').height = w;
+			document.getElementById('ron_canv').width = w;
+			document.getElementById('ron_canv').height = w;
+			document.getElementById('drum_canv').width = w;
+			document.getElementById('drum_canv').height = w;
+			 
+			 <!-- Wes -->
+			 
+			 bod = [.5*w ,.5*w];
+			 LA = Math.round(.08*w); <!-- length arm
+			 FAL = Math.round(.05*w); <!-- forearm length
+			 LAA = Math.PI; <!-- Left arm angle
+			 RAA = LAA - Math.PI;
+			 LEB = [bod[0]+LA*Math.cos(LAA), bod[1]+LA*Math.sin(LAA)]; <!-- Left elbow position
+			 REB = [bod[0]+LA*Math.cos(RAA), bod[1]+LA*Math.sin(RAA)]; 
+			 FAA = Math.round(.8*Math.PI);
+			 LH = [LEB[0]+FAL*Math.cos(FAA), LEB[1]+FAL*Math.sin(FAA)];
+			 RH = [REB[0]-FAL*Math.cos(FAA), REB[1]-FAL*Math.sin(FAA)];
+			 ElbowRate = document.getElementById("ElbowRate").value;
+			 tick = 0;
+			 level = 1;
+			 butt = [Math.round(.5*w),Math.round(.7*w)];
+			 NL = Math.round(.09*w); <!-- knee length
+			 KS = parseInt(document.getElementById('kneeSpread').value);
+			 LN = [butt[0]+1.2*KS, butt[1]+NL];
+			 RN = [butt[0]-KS, butt[1]+NL];
+			 RF = [Math.round(.4*w),Math.round(.9*w)]; <!-- left footer
+			 LF = [Math.round(.6*w),Math.round(.9*w)]; <!-- Right foot
+			 updateFS();
+			}
+            
+			function update() {
+			<!-- update node location
+			
+				<!--Wes -->
+			
+				var img = document.getElementById("wes");
+				var guitar = document.getElementById("guitar");
+				<!-- Bod and Butt
+				bodRate = document.getElementById("bodRate").value; 		
+				bod[0] = bod[0] + .01*level*bodRate;
+				butt[1] = butt[1] + .005*level*bodRate;
+				
+				<!-- Elbows
+				ElbowRate = document.getElementById("ElbowRate").value;
+				LAA = LAA + .00025*level*ElbowRate;
+				LEB = [bod[0]+LA*Math.cos(LAA), bod[1]+LA*Math.sin(LAA)];
+				RAA = LAA + .9*Math.PI;
+				REB = [bod[0]+LA*Math.cos(1.1*RAA), bod[1]+LA*Math.sin(RAA)];
+				
+				<!-- Forearms
+				FAA = FAA = FAA + .00075*level*ElbowRate;
+				LH = [LEB[0]+FAL*Math.cos(FAA), LEB[1]+FAL*Math.sin(FAA)];
+				RH = [REB[0]-FAL*Math.cos(FAA+1.7*Math.PI), REB[1]-FAL*Math.sin(FAA+1.5*Math.PI)];
+				
+				<!-- Knees (also using kneeFunk()
+				RN[0] = RN[0] +level*.01*bodRate;
+				LN[0] = LN[0] -level*.01*bodRate;
+				
+				ctx.clearRect(0,0,w,w);
+				ctx.drawImage(img, bod[0]-w*.12, bod[1]-w*.18, w*.22, w*.24);
+				ctx.beginPath();
+				ctx.moveTo(bod[0],bod[1]);
+				ctx.lineTo(butt[0],butt[1]);
+				ctx.lineTo(RN[0], RN[1]);
+				ctx.lineTo(RF[0], RF[1]);
+				ctx.moveTo(butt[0], butt[1]);
+				ctx.lineTo(LN[0], LN[1]); 
+				ctx.lineTo(LF[0], LF[1]);
+				ctx.moveTo(bod[0],bod[1]);
+				ctx.lineTo(LEB[0], LEB[1]);
+				ctx.lineTo(LH[0],LH[1]);
+				ctx.moveTo(bod[0],bod[1]);
+				ctx.lineTo(REB[0], REB[1]);
+				ctx.lineTo(RH[0], RH[1]);
+				ctx.lineWidth = Math.round(w*.01);
+				
+				ctx.stroke();
+				ctx.drawImage(guitar, butt[0]-w*.09, butt[1]-w*.16, w*.3, w*.18);
+				ctx.fillText("H",3,w*.2);
+				
+				
+				<!-- garret
+				var bass = document.getElementById("bass");
+				ctxG.clearRect(0,0,w,w);
+				ctxG.drawImage(img, bod[0]-w*.11, bod[1]-w*.28, w*.2, w*.22);
+				ctxG.beginPath();
+				ctxG.moveTo(bod[0],bod[1]);
+				ctxG.lineTo(butt[0],butt[1]);
+				ctxG.lineTo(RN[0], RN[1]);
+				ctxG.lineTo(RF[0], RF[1]);
+				ctxG.moveTo(butt[0], butt[1]);
+				ctxG.lineTo(LN[0], LN[1]); 
+				ctxG.lineTo(LF[0], LF[1]);
+				ctxG.moveTo(bod[0],bod[1]);
+				ctxG.lineTo(LEB[0], LEB[1]);
+				ctxG.lineTo(LH[0],LH[1]);
+				ctxG.moveTo(bod[0],bod[1]);
+				ctxG.lineTo(REB[0], REB[1]);
+				ctxG.lineTo(RH[0], RH[1]);
+				ctxG.lineWidth = Math.round(w*.01);
+				
+				ctxG.stroke();
+				ctxG.drawImage(bass, butt[0]-w*.09, butt[1]-w*.16, w*.3, w*.18);
+				
+				<!-- Ronnie
+				var keys = document.getElementById("keys");
+				ctxR.clearRect(0,0,w,w);
+				ctxR.drawImage(img, bod[0]-w*.11, bod[1]-w*.28, w*.2, w*.22);
+				ctxR.beginPath();
+				ctxR.moveTo(bod[0],bod[1]);
+				ctxR.lineTo(butt[0],butt[1]);
+				ctxR.lineTo(RN[0], RN[1]);
+				ctxR.lineTo(RF[0], RF[1]);
+				ctxR.moveTo(butt[0], butt[1]);
+				ctxR.lineTo(LN[0], LN[1]); 
+				ctxR.lineTo(LF[0], LF[1]);
+				ctxR.moveTo(bod[0],bod[1]);
+				ctxR.lineTo(LEB[0], LEB[1]);
+				ctxR.lineTo(LH[0],LH[1]);
+				ctxR.moveTo(bod[0],bod[1]);
+				ctxR.lineTo(REB[0], REB[1]);
+				ctxR.lineTo(RH[0], RH[1]);
+				ctxR.lineWidth = Math.round(w*.01);
+				
+				ctxR.stroke();
+				ctxR.drawImage(keys, w*.25, w*.6, w*.5, w*.3);
+				
+				<!-- drummer
+				var drums = document.getElementById("drums");
+				ctxD.clearRect(0,0,w,w);
+				ctxD.drawImage(img, bod[0]-w*.11, bod[1]-w*.28, w*.2, w*.22);
+				ctxD.beginPath();
+				ctxD.moveTo(bod[0],bod[1]);
+				ctxD.lineTo(butt[0],butt[1]);
+				ctxD.lineTo(RN[0], RN[1]);
+				ctxD.lineTo(RF[0], RF[1]);
+				ctxD.moveTo(butt[0], butt[1]);
+				ctxD.lineTo(LN[0], LN[1]); 
+				ctxD.lineTo(LF[0], LF[1]);
+				ctxD.moveTo(bod[0],bod[1]);
+				ctxD.lineTo(LEB[0], LEB[1]);
+				ctxD.lineTo(LH[0],LH[1]);
+				ctxD.moveTo(bod[0],bod[1]);
+				ctxD.lineTo(REB[0], REB[1]);
+				ctxD.lineTo(RH[0], RH[1]);
+				ctxD.lineWidth = Math.round(w*.01);
+				
+				ctxD.stroke();
+				ctxD.drawImage(drums, w*.25, w*.6, w*.5, w*.3);
+				
+				alt();
+				
+				window.requestAnimationFrame(update);
+				
+			  }
+			  function alt() {
+				if (tick > 1) { level = -1; kneeFunk(); }
+				if (tick < -1) { level = 1; }
+				tick = level*.1 + tick;
+
+			  }
+			  function kneeFunk(){
+				if (KS == document.getElementById('kneeSpread').value){}
+				else { 
+				KS = parseInt(document.getElementById('kneeSpread').value);
+				RN[0] = butt[0] - KS;
+				LN[0] = butt[0] + 1.2*KS ;}
+			  }
+			  
+			  function getFS(w){
+			  var t = 30;
+			  var str1 = t.toString();
+				return str1.concat("px Arial");
+				}
+				
+			  function updateFS(){
+			  ctx.font = getFS(w);
+			  ctxG.font = getFS(w);
+			  ctxR.font = getFS(w);
+			  ctxD.font = getFS(w);
+
+				}
+			  
+			  init();
+			  window.addEventListener('resize', resize_canvas);
+		
+        </script>
+		
+		<!-- jQuery CDN -->
+        <!--script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+        <!-- Bootstrap Js CDN -->
+        <!--script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script-->
+    </body>
+</html>
